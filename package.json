@@ -1,0 +1,39 @@
+{
+    "name": "shinema-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js",
+        "startServer": "nodemon server",
+        "startAuthServer": "nodemon authServer"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TriThuc2321/Shinema-Server.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TriThuc2321/Shinema-Server/issues"
+    },
+    "dependencies": {
+        "base-64": "^1.0.0",
+        "body-parser": "^1.19.2",
+        "cloudinary": "^1.30.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "dialogflow": "^1.2.0",
+        "dotenv": "^16.0.0",
+        "express": "^4.18.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.2.3",
+        "nodemailer": "^6.7.3",
+        "nodemon": "^2.0.15"
+    },
+    "devDependencies": {
+        "eslint": "^8.22.0",
+        "eslint-config-google": "^0.14.0"
+    }
+}
