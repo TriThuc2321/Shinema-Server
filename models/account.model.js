@@ -40,6 +40,8 @@ const AccountSchema = new Schema(
             default: '',
         },
 
+        int_id: String,
+
         listTicketId: Array,
         listReview: Array,
     },

@@ -1,10 +1,11 @@
+/* eslint-disable linebreak-style */
 const express = require('express');
 const router = express.Router();
 
 const accountController = require('../controllers/account.controller');
 const { authenToken } = require('../controllers/authen.controller');
 
-router.get('/', authenToken, accountController.getAll);
+router.get('/', accountController.getAll);
 router.get('/:email', accountController.getByEmail);
 
 router.get('/staff/all', accountController.getAllStaff);

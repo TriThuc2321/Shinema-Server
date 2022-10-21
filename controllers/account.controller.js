@@ -1,5 +1,6 @@
+/* eslint-disable linebreak-style */
+const { validatePassword } = require('../utils/index');
 const AccountModel = require('../models/account.model');
-const { validatePassword } = require('../utils');
 const { encode } = require('base-64');
 
 const accountController = {
@@ -45,27 +46,29 @@ const accountController = {
                 if (data) {
                     res.send('Email already exists');
                     return;
-                } else if (validatePassword(req.body.password)) {
+                } else if (req.body.password.length <= 6) {
                     res.send('Password has more than 6 charactor');
                     return;
                 } else {
-                    const newAccount = {
-                        name: req.body.name,
-                        contact: req.body.contact,
-                        identifyNumber: req.body.identifyNumber,
-                        address: req.body.address,
-                        birthday: req.body.birthday,
-                        email: req.body.email,
-                        password: encode(req.body.password),
-                        rank: req.body.rank,
-                        score: req.body.score,
-                        listTicketId: req.body.listTicketId,
-                        listReview: req.body.listReview,
-                        gender: req.body.gender,
-                        avatar: req.body.avatar,
-                    };
-
-                    return AccountModel.create(newAccount);
+                    AccountModel.countDocuments({ rank: 'Customer' }).then((number) => {
+                        const newAccount = {
+                            name: req.body.name,
+                            contact: req.body.contact,
+                            identifyNumber: req.body.identifyNumber,
+                            address: req.body.address,
+                            birthday: req.body.birthday,
+                            email: req.body.email,
+                            password: encode(req.body.password),
+                            rank: req.body.rank,
+                            score: req.body.score,
+                            listTicketId: req.body.listTicketId,
+                            listReview: req.body.listReview,
+                            gender: req.body.gender,
+                            avatar: req.body.avatar,
+                            int_id: req.body.rank === 'Customer' ? number.toString() : '',
+                        };
+                        return AccountModel.create(newAccount);
+                    });
                 }
             })
             .then((data) => {
