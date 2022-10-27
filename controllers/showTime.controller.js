@@ -1,5 +1,5 @@
 const ShowTimeModel = require('../models/showTime.model');
-const { subTime, availableRoom } = require('../utils');
+const availableRoom = require('../utils');
 
 const showTimeController = {
     getAll: (req, res) => {
@@ -93,23 +93,25 @@ const showTimeController = {
                         }).then(async (data) => {
                             if (data) {
                                 let flag = true;
-                                data.forEach((item, i) => {
-                                    availableRoom(newShowTime.listDateTime, item.listDateTime, runtime).then(
-                                        (result) => {
-                                            if (!result && flag) {
-                                                flag = false;
-                                                return res.send('Room is not available');
-                                            } else if (i == data.length - 1) {
-                                                ShowTimeModel.create(newShowTime)
-                                                    .then((data) => {
-                                                        return res.send('Successful');
-                                                    })
-                                                    .catch((err) => {
-                                                        res.status(500).json({ Err: err });
-                                                    });
-                                            }
-                                        },
+                                data.forEach(async (item, i) => {
+                                    const result = await availableRoom(
+                                        newShowTime.listDateTime,
+                                        item.listDateTime,
+                                        runtime,
                                     );
+
+                                    if (!result && flag) {
+                                        flag = false;
+                                        return res.send('Room is not available');
+                                    } else if (i == data.length - 1) {
+                                        ShowTimeModel.create(newShowTime)
+                                            .then((data) => {
+                                                return res.send('Successful');
+                                            })
+                                            .catch((err) => {
+                                                res.status(500).json({ Err: err });
+                                            });
+                                    }
                                 });
                             } else {
                                 ShowTimeModel.create(newShowTime)
