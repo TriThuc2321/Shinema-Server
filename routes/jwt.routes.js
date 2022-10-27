@@ -24,9 +24,13 @@ router.post('/refreshToken', (req, res) => {
                         res.sendStatus(401);
                         return;
                     } else {
-                        const accessToken = jwt.sign({ email: daa.email }, process.env.ACCESS_TOKEN_SECRET, {
-                            expiresIn: '10s',
-                        });
+                        const accessToken = jwt.sign(
+                            { email: daa.email, rank: daa.rank },
+                            process.env.ACCESS_TOKEN_SECRET,
+                            {
+                                expiresIn: '10s',
+                            },
+                        );
                         res.json({ accessToken });
                     }
                 });
@@ -49,6 +53,7 @@ router.post('/login', (req, res) => {
                 if (data.password == password) {
                     const payload = {
                         email: email,
+                        rank: data.rank,
                     };
 
                     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });

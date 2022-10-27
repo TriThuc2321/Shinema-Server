@@ -32,5 +32,6 @@ module.exports = {
         'object-curly-spacing': 0,
         'new-cap': 0,
         'linebreak-style': 0,
+        'no-use-before-define': 0,
     },
 };
