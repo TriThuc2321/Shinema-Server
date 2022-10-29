@@ -109,7 +109,7 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    res.send('Server authen run successful');
+    res.sendStatus(200).json('Start authen successful');
 });
 
 module.exports = router;
