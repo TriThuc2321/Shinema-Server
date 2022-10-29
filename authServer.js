@@ -29,7 +29,7 @@ app.all('/', (req, res, next) => {
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
-        console.log('MongoDB Connected!');
+        console.log('MongoDB Connected!!');
         app.listen(PORT, () => {
             console.log(`Authen server started on port ${PORT}`);
         });
