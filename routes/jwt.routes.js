@@ -108,7 +108,7 @@ router.post('/logout', (req, res) => {
         });
 });
 
-router.post('/', (req, res) => {
+router.get('/', (req, res) => {
     res.send('Server authen run successful');
 });
 
