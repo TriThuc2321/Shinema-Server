@@ -58,3 +58,6 @@ app.use('/api/cloudinary', cloudinary);
 
 const dialogFlowRouter = require('./routes/dialogFlow.routes');
 app.use('/api/dialogFlow/', dialogFlowRouter);
+
+const trendsRouter = require('./routes/trends.routes');
+app.use('/api/trends', trendsRouter);
