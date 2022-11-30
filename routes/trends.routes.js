@@ -3,6 +3,6 @@ const router = express.Router();
 
 const trendsController = require('../controllers/trends.controller');
 
-router.get('/daily-trends', trendsController.dailyTrends);
+router.get('/daily-trends/:geo', trendsController.dailyTrends);
 
 module.exports = router;

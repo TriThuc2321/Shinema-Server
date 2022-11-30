@@ -5,7 +5,7 @@ const googleTrendsController = {
     dailyTrends: (req, res) => {
         googleTrends
             .dailyTrends({
-                geo: 'US',
+                geo: req.params.geo,
             })
             .then((results) => {
                 const data = JSON.parse(results);
