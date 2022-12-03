@@ -25,27 +25,30 @@ const googleTrendsController = {
                         queries.push(item.title.query);
                     });
                 });
+                console.log(queries);
 
-                let keywordsRes = [];
-                const listPromise = [];
-                queries.data.forEach((trendsWord) => {
-                    listPromise.push(searchListKeyword(trendsWord));
-                });
+                const urls = queries.map((trendsWord) => searchListKeyword(trendsWord));
 
-                const resKeyword = await Promise.all(listPromise);
+                console.log(urls);
+                const resKeyword = await Promise.all(
+                    urls.map(async (url) => {
+                        const res = await fetch(url);
+                        return res.json();
+                    }),
+                );
 
                 console.log(resKeyword);
 
-                for (let i = 0; i < resKeyword.length; i++) {
-                    if (resKeyword[i].total_results !== 0) {
-                        keywordsRes.push({
-                            trend: res.data[i],
-                            result: resKeyword[i],
-                        });
-                    }
-                }
+                // for (let i = 0; i < resKeyword.length; i++) {
+                //     if (resKeyword[i].total_results !== 0) {
+                //         keywordsRes.push({
+                //             trend: res.data[i],
+                //             result: resKeyword[i],
+                //         });
+                //     }
+                // }
 
-                console.log('keywordRes', resKeyword);
+                // console.log('keywordRes', resKeyword);
 
                 // keywordsRes.map((trendsWordCollection) => {
                 //     let tmpList = [];
@@ -84,16 +87,8 @@ const googleTrendsController = {
     },
 };
 
-const searchListKeyword = (trendsWord) => {
-    const url = `${options.headers.baseUrl}search/keyword?api_key=${options.headers.apiKey}&query=${trendsWord}&page=1`;
-
-    fetch(url, options)
-        .then((res) => res.json())
-        .then((json) => {
-            console.log(json);
-        })
-        .catch((err) => console.error('error:' + err));
-};
+const searchListKeyword = (trendsWord) =>
+    `${options.headers.baseUrl}search/keyword?api_key=${options.headers.apiKey}&query=${trendsWord}&page=1`;
 
 const discoverWithKeyword = (keyword, countryCode) => {
     const url = `${options.headers.baseUrl}discover/movie?api_key=${options.headers.apiKey}&language=en-US&region=${countryCode}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_keywords=${keyword}&with_watch_monetization_types=flatrate`;
