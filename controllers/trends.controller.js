@@ -25,11 +25,9 @@ const googleTrendsController = {
                         queries.push(item.title.query);
                     });
                 });
-                console.log(queries);
 
                 const urls = queries.map((trendsWord) => searchListKeyword(trendsWord));
 
-                console.log(urls);
                 const resKeyword = await Promise.all(
                     urls.map(async (url) => {
                         const res = await fetch(url);
@@ -37,49 +35,92 @@ const googleTrendsController = {
                     }),
                 );
 
-                console.log(resKeyword);
+                const keywordsRes = [];
+                for (let i = 0; i < resKeyword.length; i++) {
+                    if (resKeyword[i].total_results !== 0) {
+                        keywordsRes.push({
+                            trend: queries[i],
+                            result: resKeyword[i],
+                        });
+                    }
+                }
 
-                // for (let i = 0; i < resKeyword.length; i++) {
-                //     if (resKeyword[i].total_results !== 0) {
-                //         keywordsRes.push({
-                //             trend: res.data[i],
-                //             result: resKeyword[i],
-                //         });
-                //     }
-                // }
+                const listKeyword = [];
 
-                // console.log('keywordRes', resKeyword);
+                keywordsRes.map((trendsWordCollection) => {
+                    let tmpList = [];
+                    const getListKW = () => {
+                        trendsWordCollection.result.results.forEach((item) => tmpList.push({ item }));
+                        return tmpList;
+                    };
+                    listKeyword.push({
+                        trend: trendsWordCollection.trend,
+                        list: getListKW(),
+                    });
+                });
 
-                // keywordsRes.map((trendsWordCollection) => {
-                //     let tmpList = [];
-                //     const getListKW = () => {
-                //         trendsWordCollection.result.results.forEach((item) => tmpList.push({ item }));
-                //         return tmpList;
-                //     };
-                //     listKeyword.push({
-                //         trend: trendsWordCollection.trend,
-                //         list: getListKW(),
-                //     });
-                // });
+                const dictionary = [];
 
-                // let dictionary = [];
-                // if (listKeyword.length !== 0) {
-                //     setNumKW(listKeyword.length);
-                //     listKeyword.forEach(async (trendKW) => {
-                //         let listPromise = [];
-                //         trendKW.list.forEach((keyword) => {
-                //             listPromise.push(discoverWithKeyword(keyword.item.id, selectedCountry.code));
-                //         });
-                //         const discoverRes = await Promise.all(listPromise);
+                const getMovie = async () => {
+                    if (listKeyword.length !== 0) {
+                        // await listKeyword.forEach(async (trendKW) => {
+                        //     const listUrl = trendKW.list.map((keyword) =>
+                        //         discoverWithKeyword(keyword.item.id, req.params.geo),
+                        //     );
+                        //     const discoverRes = await Promise.all(
+                        //         listUrl.map(async (url) => {
+                        //             const res = await fetch(url);
+                        //             return res.json();
+                        //         }),
+                        //     );
 
-                //         dictionary.push({
-                //             keyword: trendKW.trend,
-                //             movies: discoverRes[0].results,
-                //         });
-                //     });
-                // }
+                        //     const listMovie = [];
+                        //     discoverRes.forEach((item) => {
+                        //         if (item.total_results !== 0) {
+                        //             listMovie.push(...item.results);
+                        //         }
+                        //     });
 
-                // res.json(dictionary);
+                        //     console.log('aaaaaaaa');
+
+                        //     dictionary.push({
+                        //         keyword: trendKW.trend,
+                        //         movies: listMovie,
+                        //     });
+                        // });
+
+                        for (trendKW of listKeyword) {
+                            const listUrl = trendKW.list.map((keyword) =>
+                                discoverWithKeyword(keyword.item.id, req.params.geo),
+                            );
+                            const discoverRes = await Promise.all(
+                                listUrl.map(async (url) => {
+                                    const res = await fetch(url);
+                                    return res.json();
+                                }),
+                            );
+
+                            const listMovie = [];
+                            discoverRes.forEach((item) => {
+                                if (item.total_results !== 0) {
+                                    listMovie.push(...item.results);
+                                }
+                            });
+
+                            if (listMovie.length !== 0) {
+                                dictionary.push({
+                                    keyword: trendKW.trend,
+                                    movies: listMovie,
+                                });
+                            }
+                        }
+                    }
+                };
+
+                await getMovie();
+
+                res.json(dictionary);
+                //res.json(dictionary);
             })
             .catch((err) => {
                 res.status(500).send({ Err: err });
@@ -90,12 +131,7 @@ const googleTrendsController = {
 const searchListKeyword = (trendsWord) =>
     `${options.headers.baseUrl}search/keyword?api_key=${options.headers.apiKey}&query=${trendsWord}&page=1`;
 
-const discoverWithKeyword = (keyword, countryCode) => {
-    const url = `${options.headers.baseUrl}discover/movie?api_key=${options.headers.apiKey}&language=en-US&region=${countryCode}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_keywords=${keyword}&with_watch_monetization_types=flatrate`;
+const discoverWithKeyword = (keyword, countryCode) =>
+    `${options.headers.baseUrl}discover/movie?api_key=${options.headers.apiKey}&language=en-US&region=${countryCode}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_keywords=${keyword}&with_watch_monetization_types=flatrate`;
 
-    fetch(url, options)
-        .then((res) => res.json())
-        .then((json) => json)
-        .catch((err) => console.error('error:' + err));
-};
 module.exports = googleTrendsController;
