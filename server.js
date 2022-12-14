@@ -53,6 +53,9 @@ app.use('/api/ticket/', ticketRouter);
 const reviewRouter = require('./routes/review.routes');
 app.use('/api/review/', reviewRouter);
 
+const reportAnalysisRouter = require('./routes/reportAnalysis.routes');
+app.use('/api/reportAnalysis/', reportAnalysisRouter);
+
 const cloudinary = require('./routes/cloudinary.routes');
 app.use('/api/cloudinary', cloudinary);
 
