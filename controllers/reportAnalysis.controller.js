@@ -15,24 +15,52 @@ const reportAnalysisController = {
 
     getOrderByCount: async (req, res) => {
         const queryData = url.parse(req.url, true).query;
-        const { page } = queryData;
+        const page = queryData?.page || 1;
+        const limit = queryData?.limit || LIMIT;
 
-        let skip = 0;
-        if (page) skip = page * LIMIT;
-        const data = await ReportAnalysisModel.find().sort({ count: 'desc' }).skip(+skip).limit(LIMIT).exec();
-
-        res.send(data);
+        try {
+            const report = await ReportAnalysisModel.find()
+                .sort({ count: 'desc' })
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .exec();
+            const total = await ReportAnalysisModel.countDocuments().exec();
+            const result = {
+                total,
+                page,
+                limit,
+                report,
+                pageSize: report.length,
+            };
+            res.send(result);
+        } catch (err) {
+            res.send(err);
+        }
     },
 
     getOrderByDate: async (req, res) => {
         const queryData = url.parse(req.url, true).query;
-        const { page } = queryData;
+        const page = queryData?.page || 1;
+        const limit = queryData?.limit || LIMIT;
 
-        let skip = 0;
-        if (page) skip = page * LIMIT;
-        const data = await ReportAnalysisModel.find().sort({ updatedAt: 'desc' }).skip(+skip).limit(LIMIT).exec();
-
-        res.send(data);
+        try {
+            const report = await ReportAnalysisModel.find()
+                .sort({ updatedAt: 'desc' })
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .exec();
+            const total = await ReportAnalysisModel.countDocuments().exec();
+            const result = {
+                total,
+                page,
+                report,
+                limit,
+                pageSize: report.length,
+            };
+            res.send(result);
+        } catch (err) {
+            res.send(err);
+        }
     },
 
     getById: (req, res) => {
