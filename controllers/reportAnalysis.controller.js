@@ -13,48 +13,28 @@ const reportAnalysisController = {
             });
     },
 
-    getOrderByCount: async (req, res) => {
+    getByFilter: async (req, res) => {
         const queryData = url.parse(req.url, true).query;
         const page = queryData?.page || 1;
         const limit = queryData?.limit || LIMIT;
+        const filterBy = queryData?.orderBy || 'Count';
+        const name = queryData?.name || 'Detail page';
+
+        const sortBy = filterBy === 'Count' ? { count: 'desc' } : { updatedAt: 'desc' };
+        const findBy = name ? { name: name } : {};
 
         try {
-            const report = await ReportAnalysisModel.find()
-                .sort({ count: 'desc' })
+            const report = await ReportAnalysisModel.find(findBy)
+                .sort(sortBy)
                 .skip((page - 1) * limit)
                 .limit(limit)
                 .exec();
-            const total = await ReportAnalysisModel.countDocuments().exec();
+            const total = await ReportAnalysisModel.countDocuments(findBy).exec();
             const result = {
                 total,
                 page,
                 limit,
                 report,
-                pageSize: report.length,
-            };
-            res.send(result);
-        } catch (err) {
-            res.send(err);
-        }
-    },
-
-    getOrderByDate: async (req, res) => {
-        const queryData = url.parse(req.url, true).query;
-        const page = queryData?.page || 1;
-        const limit = queryData?.limit || LIMIT;
-
-        try {
-            const report = await ReportAnalysisModel.find()
-                .sort({ updatedAt: 'desc' })
-                .skip((page - 1) * limit)
-                .limit(limit)
-                .exec();
-            const total = await ReportAnalysisModel.countDocuments().exec();
-            const result = {
-                total,
-                page,
-                report,
-                limit,
                 pageSize: report.length,
             };
             res.send(result);
@@ -82,6 +62,7 @@ const reportAnalysisController = {
                 title: req.body.title,
                 _filmId: req.body._filmId,
                 count: req.body.count,
+                name: req.body.name,
             },
             { new: 'true' },
         )
@@ -94,7 +75,7 @@ const reportAnalysisController = {
     },
 
     plusCount: (req, res) => {
-        ReportAnalysisModel.findOne({ _filmId: req.body._filmId }).then((data) => {
+        ReportAnalysisModel.findOne({ _filmId: req.body._filmId, name: req.body.name }).then((data) => {
             if (data) {
                 ReportAnalysisModel.updateOne(
                     { _filmId: req.body._filmId },
@@ -113,6 +94,7 @@ const reportAnalysisController = {
                 const newReport = {
                     title: req.body.title,
                     _filmId: req.body._filmId,
+                    name: req.body.name,
                     count: 1,
                 };
                 ReportAnalysisModel.create(newReport)

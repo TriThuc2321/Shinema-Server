@@ -5,8 +5,7 @@ const reportAnalysisController = require('../controllers/reportAnalysis.controll
 const { authenToken } = require('../controllers/authen.controller');
 
 router.get('/', reportAnalysisController.getAll);
-router.get('/orderByCount', reportAnalysisController.getOrderByCount);
-router.get('/orderByDate', reportAnalysisController.getOrderByDate);
+router.get('/getByFilter', reportAnalysisController.getByFilter);
 router.get('/:id', reportAnalysisController.getById);
 
 router.post('/', reportAnalysisController.plusCount);

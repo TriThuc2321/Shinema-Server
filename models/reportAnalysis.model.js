@@ -11,6 +11,9 @@ const reportAnalysisSchema = new mongoose.Schema(
         count: {
             type: Number,
         },
+        name: {
+            type: String,
+        },
     },
     { timestamps: true },
     {
