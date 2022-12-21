@@ -20,7 +20,7 @@ const reportAnalysisController = {
         const filterBy = queryData?.orderBy || 'Count';
         const name = queryData?.name || 'Detail page';
 
-        const sortBy = filterBy === 'Count' ? { count: 'desc' } : { updatedAt: 'desc' };
+        const sortBy = filterBy === 'Top access' ? { count: 'desc' } : { updatedAt: 'desc' };
         const findBy = name ? { name: name } : {};
 
         try {
